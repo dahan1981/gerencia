@@ -247,14 +247,23 @@ class ClientRow extends StatelessWidget {
   }
 
   void openClientDetail(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => ClientHistoryDialog(
-        client: client,
-        onVisitStatus: onVisitStatus,
-      ),
-    );
+    openClientHistory(context, client, onVisitStatus);
   }
+}
+
+void openClientHistory(
+  BuildContext context,
+  ClientRecord client,
+  void Function(VisitRecord visit, String status, [String? denialReason])
+      onVisitStatus,
+) {
+  showDialog<void>(
+    context: context,
+    builder: (context) => ClientHistoryDialog(
+      client: client,
+      onVisitStatus: onVisitStatus,
+    ),
+  );
 }
 
 class ClientAvatar extends StatelessWidget {

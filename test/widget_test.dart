@@ -226,6 +226,26 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('reception visit history opens client detail',
+      (WidgetTester tester) async {
+    await login(tester);
+    await openDesktopPage(tester, 'Recepcao');
+
+    await tester.tap(find.text('Ana Beatriz Costa'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Historico do cliente'), findsOneWidget);
+    expect(find.textContaining('Foi falar com Juliana Santos'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(Dialog),
+        matching: find.textContaining('Motivo da visita: Acompanhamento'),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('clients tab shows registered visitors and history',
       (WidgetTester tester) async {
     await login(tester);

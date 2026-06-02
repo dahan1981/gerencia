@@ -12,6 +12,7 @@ import '../widgets/dialog_widgets.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/layout_widgets.dart';
 import '../widgets/status_widgets.dart';
+import 'clients_page.dart';
 
 class ReceptionPage extends StatelessWidget {
   const ReceptionPage({
@@ -161,6 +162,18 @@ class ReceptionPage extends StatelessWidget {
                             legalBasis: visit.legalBasis,
                             dataPurpose: visit.dataPurpose,
                             lgpdAcknowledged: visit.lgpdAcknowledged,
+                            onTap: () => openClientHistory(
+                              context,
+                              ClientRecord(
+                                visit,
+                                visits
+                                    .where((item) =>
+                                        item.name == visit.name &&
+                                        item.document == visit.document)
+                                    .toList(growable: false),
+                              ),
+                              onVisitStatus,
+                            ),
                           ),
                         ),
                     ],
@@ -249,6 +262,7 @@ class VisitorCard extends StatelessWidget {
     required this.legalBasis,
     required this.dataPurpose,
     required this.lgpdAcknowledged,
+    this.onTap,
   });
 
   final String name;
@@ -263,6 +277,7 @@ class VisitorCard extends StatelessWidget {
   final String legalBasis;
   final String dataPurpose;
   final bool lgpdAcknowledged;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -334,25 +349,50 @@ class VisitorCard extends StatelessWidget {
           ],
         );
 
-        return Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border),
+        return InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: compact
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      avatar,
+                      const SizedBox(height: 10),
+                      details,
+                      if (onTap != null) ...[
+                        const SizedBox(height: 8),
+                        const Align(
+                          alignment: Alignment.centerRight,
+                          child: Icon(
+                            Icons.chevron_right,
+                            size: 18,
+                            color: AppColors.gray,
+                          ),
+                        ),
+                      ],
+                    ],
+                  )
+                : Row(
+                    children: [
+                      avatar,
+                      const SizedBox(width: 12),
+                      Expanded(child: details),
+                      if (onTap != null)
+                        const Icon(
+                          Icons.chevron_right,
+                          size: 18,
+                          color: AppColors.gray,
+                        ),
+                    ],
+                  ),
           ),
-          child: compact
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [avatar, const SizedBox(height: 10), details],
-                )
-              : Row(
-                  children: [
-                    avatar,
-                    const SizedBox(width: 12),
-                    Expanded(child: details),
-                  ],
-                ),
         );
       },
     );
