@@ -4,6 +4,43 @@ import '../core/app_theme.dart';
 import '../models/app_models.dart';
 
 class MockDataService {
+  List<DemoAccount> loginAccounts() {
+    return [
+      DemoAccount(
+        email: 'gabriela@smm.gov.br',
+        password: '********',
+        profile: initialProfile(),
+      ),
+      const DemoAccount(
+        email: 'ademir@gmail.com',
+        password: 'Ademir123@',
+        profile: UserProfile(
+          fullName: 'Ademir',
+          cpf: '000.000.000-00',
+          birthDate: '01/01/1990',
+          email: 'ademir@gmail.com',
+          phone: '(21) 99901-0008',
+          role: 'Coordenacao - Administrador',
+          sector: 'Coordenacao',
+          registration: 'SMM-ADM-002',
+          initials: 'AD',
+          avatarColor: AppColors.roseDark,
+          photoPath: null,
+        ),
+      ),
+    ];
+  }
+
+  UserProfile? authenticate(String email, String password) {
+    final normalizedEmail = email.trim().toLowerCase();
+    for (final account in loginAccounts()) {
+      if (account.email == normalizedEmail && account.password == password) {
+        return account.profile;
+      }
+    }
+    return null;
+  }
+
   UserProfile initialProfile() {
     return const UserProfile(
       fullName: 'Dra. Gabriela Santos',
@@ -167,4 +204,16 @@ class MockDataService {
           time: '14:00'),
     ];
   }
+}
+
+class DemoAccount {
+  const DemoAccount({
+    required this.email,
+    required this.password,
+    required this.profile,
+  });
+
+  final String email;
+  final String password;
+  final UserProfile profile;
 }

@@ -62,6 +62,31 @@ void main() {
     expect(find.text('Eventos de ${appDate(todayDate())}'), findsOneWidget);
   });
 
+  testWidgets('rejects invalid login', (WidgetTester tester) async {
+    await tester.pumpWidget(const SistemaGerirApp());
+
+    await tester.enterText(find.byType(TextField).at(1), 'senha-incorreta');
+    tester.testTextInput.hide();
+    await tapAfterScroll(tester, find.widgetWithText(FilledButton, 'Acessar'));
+
+    expect(find.text('E-mail ou senha invalidos.'), findsOneWidget);
+    expect(find.text('Entrar no sistema'), findsOneWidget);
+  });
+
+  testWidgets('opens Ademir administrator profile',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const SistemaGerirApp());
+
+    await tester.enterText(find.byType(TextField).at(0), 'ademir@gmail.com');
+    await tester.enterText(find.byType(TextField).at(1), 'Ademir123@');
+    tester.testTextInput.hide();
+    await tapAfterScroll(tester, find.widgetWithText(FilledButton, 'Acessar'));
+
+    expect(find.text('Ademir'), findsWidgets);
+    expect(find.text('Coordenacao - Administrador'), findsWidgets);
+    expect(find.text('Agenda'), findsWidgets);
+  });
+
   testWidgets('opens user profile after login', (WidgetTester tester) async {
     await login(tester);
 

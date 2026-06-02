@@ -44,6 +44,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final MockDataService mockData = MockDataService();
   final emailController = TextEditingController(text: 'gabriela@smm.gov.br');
   final passwordController = TextEditingController(text: '********');
   bool obscure = true;
@@ -53,6 +54,22 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  void login() {
+    final profile = mockData.authenticate(
+      emailController.text,
+      passwordController.text,
+    );
+    if (profile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('E-mail ou senha invalidos.')),
+      );
+      return;
+    }
+    Navigator.of(context).pushReplacement(
+      CupertinoPageRoute(builder: (_) => HomeShell(initialProfile: profile)),
+    );
   }
 
   @override
@@ -92,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextField(
                         controller: passwordController,
                         obscureText: obscure,
+                        onSubmitted: (_) => login(),
                         decoration: InputDecoration(
                           labelText: 'Senha',
                           prefixIcon: const Icon(Icons.lock_outline),
@@ -115,12 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(
-                              CupertinoPageRoute(
-                                  builder: (_) => const HomeShell()),
-                            );
-                          },
+                          onPressed: login,
                           icon: const Icon(Icons.login),
                           label: const Text('Acessar'),
                         ),
@@ -235,7 +248,9 @@ class _LoginChip extends StatelessWidget {
 }
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, required this.initialProfile});
+
+  final UserProfile initialProfile;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -244,10 +259,16 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   final MockDataService mockData = MockDataService();
   AppSection section = AppSection.agenda;
-  late UserProfile profile = mockData.initialProfile();
+  late UserProfile profile;
   late final List<AgendaEvent> events = List.of(mockData.initialEvents());
   late final List<AppDocument> documents = List.of(mockData.initialDocuments());
   late final List<VisitRecord> visits = List.of(mockData.initialVisits());
+
+  @override
+  void initState() {
+    super.initState();
+    profile = widget.initialProfile;
+  }
 
   void setSection(AppSection value) {
     setState(() => section = value);

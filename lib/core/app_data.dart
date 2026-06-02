@@ -64,6 +64,15 @@ const appUsers = [
     registration: 'SMM-007',
     createdAt: '18/01/2026',
   ),
+  AppUser(
+    name: 'Ademir',
+    sector: 'Coordenacao',
+    role: 'Coordenacao - Administrador',
+    email: 'ademir@gmail.com',
+    phone: '(21) 99901-0008',
+    registration: 'SMM-ADM-002',
+    createdAt: '02/06/2026',
+  ),
 ];
 
 final appUserNames = appUsers.map((user) => user.name).toList();
@@ -77,6 +86,7 @@ const appSectorNames = [
   'Recepcao',
   'Administrativo',
   'Controle Interno',
+  'Coordenacao',
   'CODIMM',
 ];
 
