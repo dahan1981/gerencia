@@ -310,6 +310,13 @@ class _HomeShellState extends State<HomeShell> {
     setState(() => profile = updatedProfile);
   }
 
+  void logout() {
+    Navigator.of(context).pushAndRemoveUntil(
+      CupertinoPageRoute(builder: (_) => const LoginScreen()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -383,7 +390,8 @@ class _HomeShellState extends State<HomeShell> {
                       current: section,
                       profile: profile,
                       closeOnSelect: true,
-                      onSelected: setSection))
+                      onSelected: setSection,
+                      onLogout: logout))
               : null,
           body: Row(
             children: [
@@ -395,6 +403,7 @@ class _HomeShellState extends State<HomeShell> {
                     profile: profile,
                     closeOnSelect: false,
                     onSelected: setSection,
+                    onLogout: logout,
                   ),
                 ),
               Expanded(

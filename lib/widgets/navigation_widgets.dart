@@ -12,12 +12,14 @@ class AppSidebar extends StatelessWidget {
     required this.profile,
     required this.closeOnSelect,
     required this.onSelected,
+    required this.onLogout,
   });
 
   final AppSection current;
   final UserProfile profile;
   final bool closeOnSelect;
   final ValueChanged<AppSection> onSelected;
+  final VoidCallback onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -118,42 +120,57 @@ class AppSidebar extends StatelessWidget {
               ),
             ),
             const Divider(height: 1),
-            InkWell(
-              onTap: () {
-                onSelected(AppSection.perfil);
-                if (closeOnSelect) Navigator.of(context).pop();
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      profile.fullName,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      profile.role,
-                      style:
-                          const TextStyle(fontSize: 11, color: AppColors.gray),
-                    ),
-                    const SizedBox(height: 8),
-                    const Row(
+            Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      onSelected(AppSection.perfil);
+                      if (closeOnSelect) Navigator.of(context).pop();
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.logout, size: 14, color: AppColors.rose),
-                        SizedBox(width: 4),
                         Text(
-                          'Sair',
-                          style: TextStyle(fontSize: 11, color: AppColors.rose),
+                          profile.fullName,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          profile.role,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.gray,
+                          ),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: onLogout,
+                    borderRadius: BorderRadius.circular(6),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          Icon(Icons.logout, size: 14, color: AppColors.rose),
+                          SizedBox(width: 4),
+                          Text(
+                            'Sair',
+                            style:
+                                TextStyle(fontSize: 11, color: AppColors.rose),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

@@ -87,6 +87,16 @@ void main() {
     expect(find.text('Agenda'), findsWidgets);
   });
 
+  testWidgets('logs out from sidebar', (WidgetTester tester) async {
+    await login(tester);
+
+    await tester.tap(find.text('Sair'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Entrar no sistema'), findsOneWidget);
+    expect(find.text('Acessar'), findsOneWidget);
+  });
+
   testWidgets('opens user profile after login', (WidgetTester tester) async {
     await login(tester);
 
