@@ -1,0 +1,29 @@
+.dart_tool/
+.appdata/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+flutter/
+coverage/
+flutter_*.log
+escopo.pdf
+referencia estética gestão.html
+VERSÃO PRETO 80%-01.png
+
+android/.gradle/
+android/local.properties
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+ios/.symlinks/
+
+windows/flutter/ephemeral/
+linux/flutter/ephemeral/
+macos/Flutter/ephemeral/
+
+*.iml
+.idea/
+.vscode/
