@@ -45,8 +45,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final MockDataService mockData = MockDataService();
-  final emailController = TextEditingController(text: 'gabriela@smm.gov.br');
-  final passwordController = TextEditingController(text: '********');
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   bool obscure = true;
 
   @override

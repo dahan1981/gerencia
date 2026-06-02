@@ -16,8 +16,10 @@ Future<void> login(
   addTearDown(tester.view.resetDevicePixelRatio);
 
   await tester.pumpWidget(const SistemaGerirApp());
-  await tester.tap(find.text('Acessar'));
-  await tester.pumpAndSettle();
+  await tester.enterText(find.byType(TextField).at(0), 'gabriela@smm.gov.br');
+  await tester.enterText(find.byType(TextField).at(1), '********');
+  tester.testTextInput.hide();
+  await tapAfterScroll(tester, find.widgetWithText(FilledButton, 'Acessar'));
 }
 
 Future<void> openDesktopPage(WidgetTester tester, String label) async {
@@ -53,6 +55,14 @@ void main() {
 
     expect(find.text('Entrar no sistema'), findsOneWidget);
     expect(find.text('SMM - Secretaria da Mulher'), findsOneWidget);
+    expect(
+        find.byType(TextField).at(0).evaluate().single.widget,
+        isA<TextField>()
+            .having((field) => field.controller?.text, 'email', ''));
+    expect(
+        find.byType(TextField).at(1).evaluate().single.widget,
+        isA<TextField>()
+            .having((field) => field.controller?.text, 'senha', ''));
   });
 
   testWidgets('opens agenda after login', (WidgetTester tester) async {
@@ -95,6 +105,14 @@ void main() {
 
     expect(find.text('Entrar no sistema'), findsOneWidget);
     expect(find.text('Acessar'), findsOneWidget);
+    expect(
+        find.byType(TextField).at(0).evaluate().single.widget,
+        isA<TextField>()
+            .having((field) => field.controller?.text, 'email', ''));
+    expect(
+        find.byType(TextField).at(1).evaluate().single.widget,
+        isA<TextField>()
+            .having((field) => field.controller?.text, 'senha', ''));
   });
 
   testWidgets('opens user profile after login', (WidgetTester tester) async {
