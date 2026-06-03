@@ -14,6 +14,7 @@ import 'pages/profile_page.dart';
 import 'pages/reception_page.dart';
 import 'pages/users_page.dart';
 import 'services/mock_data_service.dart';
+import 'services/local_data_store.dart';
 import 'widgets/avatar_widgets.dart';
 import 'widgets/layout_widgets.dart';
 import 'widgets/navigation_widgets.dart';
@@ -258,16 +259,34 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   final MockDataService mockData = MockDataService();
+  final LocalDataStore localDataStore = LocalDataStore();
   AppSection section = AppSection.agenda;
+  bool loaded = false;
   late UserProfile profile;
-  late final List<AgendaEvent> events = List.of(mockData.initialEvents());
-  late final List<AppDocument> documents = List.of(mockData.initialDocuments());
-  late final List<VisitRecord> visits = List.of(mockData.initialVisits());
+  List<AgendaEvent> events = [];
+  List<AppDocument> documents = [];
+  List<VisitRecord> visits = [];
 
   @override
   void initState() {
     super.initState();
     profile = widget.initialProfile;
+    loadLocalData();
+  }
+
+  Future<void> loadLocalData() async {
+    final data = await localDataStore.load(mockData);
+    if (!mounted) return;
+    setState(() {
+      events = data.events;
+      documents = data.documents;
+      visits = data.visits;
+      loaded = true;
+    });
+  }
+
+  void persistLocalData() {
+    localDataStore.save(events: events, documents: documents, visits: visits);
   }
 
   void setSection(AppSection value) {
@@ -277,22 +296,32 @@ class _HomeShellState extends State<HomeShell> {
     }
   }
 
-  void addEvent(AgendaEvent event) => setState(() => events.add(event));
+  void addEvent(AgendaEvent event) {
+    setState(() => events.add(event));
+    persistLocalData();
+  }
 
   void updateEvent(AgendaEvent current, AgendaEvent updated) {
     final index = events.indexWhere((event) => identical(event, current));
     if (index == -1) return;
     setState(() => events[index] = updated);
+    persistLocalData();
   }
 
   void deleteEvent(AgendaEvent event) {
     setState(() => events.removeWhere((item) => identical(item, event)));
+    persistLocalData();
   }
 
-  void addDocument(AppDocument document) =>
-      setState(() => documents.insert(0, document));
+  void addDocument(AppDocument document) {
+    setState(() => documents.insert(0, document));
+    persistLocalData();
+  }
 
-  void addVisit(VisitRecord visit) => setState(() => visits.insert(0, visit));
+  void addVisit(VisitRecord visit) {
+    setState(() => visits.insert(0, visit));
+    persistLocalData();
+  }
 
   void updateVisit(VisitRecord visit, String status, [String? denialReason]) {
     final index = visits.indexOf(visit);
@@ -304,6 +333,7 @@ class _HomeShellState extends State<HomeShell> {
           denialReason: denialReason,
           pending: false);
     });
+    persistLocalData();
   }
 
   void updateProfile(UserProfile updatedProfile) {
@@ -322,6 +352,11 @@ class _HomeShellState extends State<HomeShell> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 760;
+        if (!loaded) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
         return Scaffold(
           appBar: AppBar(
             leading: compact

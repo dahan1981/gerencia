@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sistema_gerir/core/formatters.dart';
 import 'package:sistema_gerir/main.dart';
@@ -50,6 +51,10 @@ Future<void> tapAfterScroll(WidgetTester tester, Finder finder) async {
 }
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   testWidgets('shows login screen', (WidgetTester tester) async {
     await tester.pumpWidget(const SistemaGerirApp());
 
@@ -220,6 +225,31 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Reuniao atualizada'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('persists agenda event after app restart',
+      (WidgetTester tester) async {
+    await login(tester);
+
+    await tester.tap(find.text('Novo evento'));
+    await tester.pumpAndSettle();
+    await enterDialogText(tester, 0, 'Evento persistente');
+    await tester.tap(find.text('Salvar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Evento persistente'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(const SistemaGerirApp());
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).at(0), 'gabriela@smm.gov.br');
+    await tester.enterText(find.byType(TextField).at(1), '********');
+    tester.testTextInput.hide();
+    await tapAfterScroll(tester, find.widgetWithText(FilledButton, 'Acessar'));
+
+    expect(find.text('Evento persistente'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

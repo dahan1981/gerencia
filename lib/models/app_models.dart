@@ -26,6 +26,39 @@ class AgendaEvent {
   final String legalBasis;
   final String dataPurpose;
   final String accessLevel;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date.toIso8601String(),
+      'time': time,
+      'title': title,
+      'people': people,
+      'description': description,
+      'color': color.toARGB32(),
+      'tag': tag,
+      'legalBasis': legalBasis,
+      'dataPurpose': dataPurpose,
+      'accessLevel': accessLevel,
+    };
+  }
+
+  factory AgendaEvent.fromJson(Map<String, dynamic> json) {
+    return AgendaEvent(
+      date: DateTime.parse(json['date'] as String),
+      time: json['time'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      people: json['people'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      color: Color(json['color'] as int? ?? 0xFFD4537E),
+      tag: json['tag'] as String? ?? 'Interno',
+      legalBasis:
+          json['legalBasis'] as String? ?? 'Execucao de politica publica',
+      dataPurpose: json['dataPurpose'] as String? ??
+          'Organizacao de agenda institucional',
+      accessLevel: json['accessLevel'] as String? ??
+          'Participantes e usuarios autorizados',
+    );
+  }
 }
 
 class AppDocument {
@@ -64,6 +97,57 @@ class AppDocument {
   final String dataPurpose;
   final String accessLevel;
   final String retentionPolicy;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'kind': kind.name,
+      'number': number,
+      'subject': subject,
+      'party': party,
+      'status': status,
+      'received': received,
+      'sender': sender,
+      'recipient': recipient,
+      'message': message,
+      'assignedSigner': assignedSigner,
+      'signedBy': signedBy,
+      'signatureStatus': signatureStatus,
+      'legalBasis': legalBasis,
+      'dataPurpose': dataPurpose,
+      'accessLevel': accessLevel,
+      'retentionPolicy': retentionPolicy,
+    };
+  }
+
+  factory AppDocument.fromJson(Map<String, dynamic> json) {
+    final kindName = json['kind'] as String? ?? DocumentKind.ci.name;
+    return AppDocument(
+      kind: DocumentKind.values.firstWhere(
+        (kind) => kind.name == kindName,
+        orElse: () => DocumentKind.ci,
+      ),
+      number: json['number'] as String? ?? '',
+      subject: json['subject'] as String? ?? '',
+      party: json['party'] as String? ?? '',
+      status: json['status'] as String? ?? 'Pendente',
+      received: json['received'] as bool? ?? false,
+      sender: json['sender'] as String? ?? '',
+      recipient: json['recipient'] as String? ?? '',
+      message: json['message'] as String? ?? '',
+      assignedSigner:
+          json['assignedSigner'] as String? ?? 'Dra. Gabriela Santos',
+      signedBy: json['signedBy'] as String?,
+      signatureStatus: json['signatureStatus'] as String?,
+      legalBasis:
+          json['legalBasis'] as String? ?? 'Execucao de politica publica',
+      dataPurpose: json['dataPurpose'] as String? ??
+          'Comunicacao oficial e tramitacao administrativa',
+      accessLevel:
+          json['accessLevel'] as String? ?? 'Usuarios autorizados pelo setor',
+      retentionPolicy: json['retentionPolicy'] as String? ??
+          'Retencao conforme regra administrativa',
+    );
+  }
 }
 
 class DetailItem {
@@ -123,6 +207,44 @@ class VisitRecord {
   final String dataPurpose;
   final String? denialReason;
   final bool pending;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'document': document,
+      'sector': sector,
+      'target': target,
+      'status': status,
+      'time': time,
+      'photoPath': photoPath,
+      'visitReason': visitReason,
+      'lgpdAcknowledged': lgpdAcknowledged,
+      'legalBasis': legalBasis,
+      'dataPurpose': dataPurpose,
+      'denialReason': denialReason,
+      'pending': pending,
+    };
+  }
+
+  factory VisitRecord.fromJson(Map<String, dynamic> json) {
+    return VisitRecord(
+      name: json['name'] as String? ?? '',
+      document: json['document'] as String? ?? '',
+      sector: json['sector'] as String? ?? '',
+      target: json['target'] as String? ?? '',
+      status: json['status'] as String? ?? 'Aguardando',
+      time: json['time'] as String? ?? '',
+      photoPath: json['photoPath'] as String?,
+      visitReason: json['visitReason'] as String? ?? 'Atendimento presencial',
+      lgpdAcknowledged: json['lgpdAcknowledged'] as bool? ?? true,
+      legalBasis:
+          json['legalBasis'] as String? ?? 'Execucao de politica publica',
+      dataPurpose: json['dataPurpose'] as String? ??
+          'Controle de acesso e atendimento presencial',
+      denialReason: json['denialReason'] as String?,
+      pending: json['pending'] as bool? ?? false,
+    );
+  }
 
   VisitRecord copyWith({
     String? status,
